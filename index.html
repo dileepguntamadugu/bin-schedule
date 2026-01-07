@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hills Shire Bin Calendar</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        input, button { width: 100%; padding: 10px; margin-top: 10px; }
+        button { background-color: #0070f3; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0051a2; }
+        #status { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🗑️ Get Your Bin Calendar</h1>
+    <p>Enter your address to receive an auto-generated calendar file for your Outlook/Google/Apple Calendar.</p>
+    
+    <input type="text" id="address" placeholder="e.g. 12 Example St, Box Hill">
+    <input type="email" id="email" placeholder="your@email.com">
+    <button onclick="getCalendar()">Send Me The Calendar</button>
+    
+    <p id="status"></p>
+
+    <script>
+        async function getCalendar() {
+            const address = document.getElementById('address').value;
+            const email = document.getElementById('email').value;
+            const status = document.getElementById('status');
+
+            if(!address || !email) {
+                alert("Please enter both details.");
+                return;
+            }
+
+            status.innerText = "Searching Council database... ⏳";
+
+            try {
+                // Determine the backend URL. 
+                // If running locally use http://localhost:5000/api/send-calendar
+                // Once deployed, this will be your Vercel URL
+                const response = await fetch('/api/send-calendar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, email })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    status.innerText = "✅ Done! Check your inbox.";
+                } else {
+                    status.innerText = "❌ Error: " + result.error;
+                }
+            } catch (error) {
+                status.innerText = "❌ Network Error.";
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

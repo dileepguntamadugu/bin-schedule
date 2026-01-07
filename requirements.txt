@@ -1,0 +1,4 @@
+flask
+requests
+ics
+resend  # We will use Resend (free tier) for easy emailing
